@@ -1,0 +1,165 @@
+\documentclass[twoside, a4paper, 11pt]{article}
+\usepackage{fullpage, url, hyperref, textcomp}
+
+\title{DLC.Link: Enabling Bitcoin in Applications}
+\author{Aki Balogh \and Jesse Eisenberg \and Matt Bombard \and Grayson Lucas}
+\date{\today}
+
+\begin{document}
+\maketitle
+  \begin{abstract}
+    What is Bitcoin? We review the five characteristics of money with a particular focus on Bitcoin’s scarcity. We then define conditional payments, smart contracts, and Bitcoin's lack of interoperability.
+    This leads to the core question: Why doesn’t Bitcoin possess smart contract functionality? What are the current "solutions" (i.e., wrapping, bridging, CeFi) and what are the risks to each solution.
+    We then provide our novel solution, Discreet Log Contracts (DLCs), a self-wrapped, self-bridged, self-custodied solution. We learn the technical components of DLCs, the key improvements to existing solutions, and how DLCs bring much-needed smart contract functionality to Bitcoin. We also learn about DLC.Link’s core technological components.
+    We quickly define oracles, a decentralized Bitcoin Oracle Network (TM), the “oracle problem”, and DLC.Link’s unique solution to this problem.
+    We discuss use cases and provide real-world examples of DLC.Link in action.
+    Last, we conclude the DLC.Link whitepaper.
+  \end{abstract}
+
+  \section{What is Bitcoin?}
+  According to Bitcoin’s pseudonymous founder, Satoshi Nakamoto, Bitcoin is a “peer-to-peer electronic cash system”.\footnote{\url{https://bitcoin.org/bitcoin.pdf}} Satoshi’s vision for Bitcoin was to become the next evolution in money. Bitcoin inherently possesses the five key characteristics of money. These are durability, portability, divisibility, fungibility, and acceptability.\footnote{\url{https://www.stlouisfed.org/education/economic-lowdown-podcast-series/episode-9-functions-of-money}} As a brand-new cash system, Bitcoin combines the core characteristics of the modern monetary system with a novel distributed peer-to-peer computer network secured by energy. This unique combination resulted in the birth of the crypto industry.
+
+  Before Bitcoin, previous experiments to “democratize” money were attempted with each one ultimately ending in failure.\footnote{\url{https://www.investopedia.com/tech/were-there-cryptocurrencies-bitcoin/}} Bitcoin, however, solved the “reversibility problem” by eliminating the need for trusted third parties that could willingly or unwillingly reverse transactions. In place of trusted third parties, Satoshi developed a chain of cryptographically signed transactions secured by a proof-of-work consensus in order to validate payments.\footnote{\url{https://medium.com/@lightcoin/the-problem-bitcoin-solves-8b3944ea77a7}}
+
+  Another well-known core characteristic of Bitcoin is its limited supply. Satoshi famously encoded a hard cap of 21 million Bitcoin that could ever be in existence. Bitcoin’s built-in scarcity manifested a powerful narrative, “Digital Gold.” In addition to its characteristics as an electronic money, Bitcoin is perceived by many as a store of value and hedge against monetary debasement. Legendary macro investor, Paul Tudor Jones, believes the 2020’s decade will be a period of fiscal retrenchment and that Bitcoin will have [significant] value at some point.\footnote{\url{https://twitter.com/SquawkCNBC/status/1579460717752684546}} This idea of Bitcoin as digital gold is so strong that United States Senator, Cynthia Lummis, termed BTC the “hardest money ever created” moments after unveiling the country’s first ever bi-partisan cryptocurrency bill.\footnote{\url{https://finbold.com/u-s-senator-lummis-calls-bitcoin-the-hardest-money-ever-been-created/ }}
+
+  As robust and decentralized as the Bitcoin network has become, it possesses significant technical limitations. Bitcoin has been widely criticized for its inability to scale. As a result, the Bitcoin network can only process a limited number of transactions per second, which leads to slow transaction speeds and high fees during periods of increased network activity. Each Bitcoin block can only realistically store 2MB of data, which is approximately 4,000 transactions per block.\footnote{\url{https://www.bitstamp.net/learn/crypto-101/what-is-block-size/ }}\footnote{\url{https://bitcoinmagazine.com/guides/what-is-the-bitcoin-block-size-limit}} Depending on the weight and type of transaction performed, data availability limitations may further restrict the number of transactions per block. As a result, data heavy smart contract transactions have never been able to scale on Bitcoin. The recent NFT ordinals development is a recent example of Bitcoin’s data storage limitations.\footnote{\url{https://www.theblock.co/post/207086/what-are-bitcoin-nfts-ordinals-and-how-do-they-work}} Last, Bitcoin the network, is highly inflexible. Bitcoin’s unique design favors security and simplicity which makes it cumbersome, if not impossible, to introduce new or innovative features to the Bitcoin Script.
+
+  Since its inception, Bitcoin developers have repeatedly attempted to build functionality directly on the base layer. Many brilliant programmers, including Ethereum’s Vitalik Buterin, worked to bring smart contract functionality to Bitcoin. The Bitcoin community, however, is legendarily known for its aversion to change. Any improvement proposal takes years of debate, modeling, and code audits before final implementation. As a result, repeatedly unsuccessful attempts to update the Bitcoin code precipitated a developer exodus to rival smart contract blockchains. Vitalik Buterin’s Ethereum, in particular, has seen tremendous success and is jockeying with Bitcoin for the top blockchain by market capitalization.\footnote{\url{https://medium.com/coinmonks/the-flippening-what-it-is-and-why-it-matters-63e22486ca44}}
+
+  \section{What are conditional payments?}
+
+  Conditional payments are payments made with specific conditions or embedded logic. These conditions can be specified in the contract or agreement, and can be triggered by a variety of factors, such as the completion of a specific task, the passage of a certain amount of time, or the occurrence of a particular event. Conditional payments can be used in a wide range of contexts, including financial transactions, employment agreements, or even personal contracts. Many conditional payments use cases are finding a home on smart contract blockchains. The size of the conditional payment market is likely in the tens of trillions of dollars. The blockchains, applications, and infrastructure providers that successfully unlock this heretofore untapped value will likely come to dominate the 21st century.
+
+  \section{What are smart contracts?}
+
+  [Smart contracts are] self-executing contracts with the terms of the agreement between buyer and seller being directly written into lines of code. The code and the agreements contained therein exist across a distributed, decentralized blockchain network. The code controls the execution, and transactions are trackable and irreversible. Smart contracts permit trusted transactions and agreements to be carried out among disparate, anonymous parties without the need for a central authority, legal system, or external enforcement mechanism.\footnote{\url{ https://www.investopedia.com/terms/s/smart-contracts.asp}}
+
+  \section{Bitcoin’s lack of interoperability}
+
+  The creation of smart contracts has led to a Cambrian explosion of innovation on decentralized blockchain networks. From Decentralized Finance (“DeFi”) to Nonfungible Tokens (“NFTs”) to Decentralized Autonomous Organizations (“DAOs”), a growing series of startup economies have sprung into existence. As mentioned earlier, Bitcoin’s limited scripting language severely limits its ability to interact with smart contracts. As a result, the tremendous capitalization of Bitcoin (“BTC”) the asset remains untapped. Bitcoiners in need of productive BTC capital are forced to look elsewhere.
+
+  \section{Problem: Bitcoin lacks smart contract functionality. Bitcoin cannot move without wrapping, bridging or 3rd party custodianship}
+
+  This leads to a deeper review into Bitcoin’s smart contract limitations. Why doesn’t Bitcoin have smart contract functionality similar to its rival smart contract blockchains? Bitcoin’s programming language, Bitcoin Script, is a simple, stack-based Turing-incomplete language. By maintaining Turing-incompleteness, Bitcoin Script removes many attack vectors. Turing incompleteness is powerful in that it prevents malicious attacks or unintentional bugs from halting the blockchain. Bitcoin’s focus on security, however, does come with costs. Turing incompleteness also prevents complex transactions from taking place on the Bitcoin blockchain. As a result, many Bitcoiners have migrated to rival smart contract platforms while others have taken their BTC capital to the traditional financial system.
+
+  \subsection{Wrapping}
+
+  In today’s blockchain economy, gas assets like ETH, SOL, and AVAX power smart contract economies. In order to transact on a specific blockchain one must possess network-compatible assets. Due to code incompatibility, smart contract blockchains are unable to transact with native Bitcoin in the same ways that they can interact with their own native assets. As a result, software programmers developed a solution that allowed for native BTC to be “wrapped” and repackaged into a synthetic Bitcoin.
+
+  What are wrapped assets and what is wBTC? Wrapped Bitcoin operates similarly to a Bitcoin IOU. Wrapped Bitcoin, wBTC for example, is backed 1:1 with native BTC and custodied by an independent 3rd party entity, Bitgo. Custodians promise to safekeep the BTC, however, as many CeFi firms recently demonstrated in the 2022 crypto bear market (i.e., Blockfi \& Celsius), this is not guaranteed. Wrapped Bitcoin’s custodian risk particularly suffers from a number of risks including blackbox, censorship, and regulatory risk.
+
+  Blackbox risk occurs when an entity withholds key information regarding the strategy, controls, and risk management of its assets. Customers are required to trust the entity does not possess hidden risk. Further, customers rely upon the entity to not deviate from its own stated objectives. Additionally, censorship risk occurs when customers give up their anonymity in order to satisfy Know-Your-Client (“KYC”) laws. Custodians such as Bitgo require their depositors to KYC in order to officially onboard as clients. Bitcoin, known for its censorship resistance properties, loses one of the core benefits when wrapping. Last, regulatory risk occurs if a state or supra-national actor criminalizes or restricts crypto assets and transactions. Custodians must follow the law or suffer financial or criminal consequences. In each scenario, the BTC may be lost forever, leaving the user holding worthless synthetic BTC tokens. The adage, “not your keys, not your coins” is appropriate when letting a 3rd party custody your assets.
+
+  The risks to wrapping Bitcoin are many and well understood. Even with the above risks, more than 185,000 wBTC trade on the Ethereum blockchain (Solana also holds approximately 16,000 now-defunct wrapped soBTC).\footnote{\url{https://www.coingecko.com/en/coins/wrapped-bitcoin} as of December 20, 2020} \footnote{\url{https://www.coingecko.com/en/coins/wrapped-bitcoin-sollet} as of December 20, 2020} For comparison, the much-ballyhooed Bitcoin Lightning Network only holds 5,000 BTC in total.\footnote{\url{https://cointelegraph.com/news/bitcoin-lightning-network-capacity-strikes-5-000-btc}} The fact that Ethereum’s wrapped Bitcoin holds more than 37x the quantity of the Lightning Network’s Bitcoin demonstrates the demand for advanced smart contract blockchains.
+
+  \subsection{Bridging}
+
+  Blockchain programmers have developed cross-chain crypto infrastructure called bridges. So, what is a bridge? A bridge is a piece of software allowing users to interact between different blockchain networks in a decentralized manner. Bridges allow for an entity or individual to transfer assets from one blockchain to another regardless of the code’s compatibility. Typically, a user sends (“locks”) their native token(s) to a bridge and in exchange receives newly minted “wrapped” tokens that are compatible with the destination blockchain.\footnote{\url{https://worldcoin.org/articles/crypto-bridge-hacks
+  }}
+
+  While bridges solve many of the issues trustlessly moving Bitcoin between blockchains, they do not come without risk. According to an August 2022 Chainalysis report, approximately \$2 billion in crypto was stolen across 13 bridge hacks. This resulted in an estimated 70\% of the funds stolen in 2022. Bridges are an extremely attractive target as they typically feature a central storage point for the funds bridged between blockchains.\footnote{\url{https://blog.chainalysis.com/reports/cross-chain-bridge-hacks-2022/
+  }}  In 2022 alone, the Nomad Bridge hack fetched \$190 million in exploited crypto assets while the Ronin Bridge hack stole an eye-popping \$600 million in bridged assets.\footnote{\url{https://decrypt.co/106459/crypto-bridge-nomad-exploited-190m-frenzied-free-for-all}}\footnote{\url{https://cointelegraph.com/news/the-aftermath-of-axie-infinity-s-650m-ronin-bridge-hack}}
+
+  \subsection{Centralized finance}
+
+  Bitcoiners are no different than other investors. Many expect their BTC capital to be put to productive use. For the less technically inclined, centralized financial (“CeFi”) firms offer many of the same services as their DeFi smart contract competitors. Centralized crypto exchanges, lenders, and custodians provide services similar to those found in the traditional financial world. As a result, a considerable number of Bitcoiners place their BTC with CeFi entities.
+
+  CeFi firms share all of the same custodian risks as their wrapped Bitcoin alternatives. Additionally, CeFi firms suffer from counterparty risk. Many “on-chain” transparencies provide real-time audit mechanisms such as Proof of Reserves or Proof of Liabilities.\footnote{\url{https://blog.chain.link/proof-of-reserves/?_ga=2.204404560.1370862830.1671726988-1493302761.1668108969&_gac=1.221998826.1671726988.CjwKCAiAnZCdBhBmEiwA8nDQxSl2NT918vUjEamefLNPZaD_B0LgGumfRR6kOTYAS8YO1ztPJN-hKRoCoBsQAvD_BwE}}\footnote{url{https://niccarter.info/proof-of-reserves/}} Counterparty risk, however, is always present with firms that operate off-chain.\footnote{\url{https://www.reuters.com/technology/binances-books-are-black-box-filings-show-crypto-giant-tries-rally-confidence-2022-12-19/}}  Trust in leadership, ownership, and the institution itself are the minimum requirements to custody assets. Even then, fraud and financial mismanagement occur as seen with the spectacular implosions of FTX, Blockfi, Voyager, and Celsius earlier this year. Each of the aforementioned CeFi firms suffered from fraud, financial mismanagement, or a combination of the two.
+
+  The dust is still settling but the amount of destroyed crypto wealth is in the tens, if not, hundreds of billions of dollars. Whether wrapped, bridged, or CeFi, Bitcoiners face a considerable number of risks putting their BTC to productive use. After 2022’s devastation, it would be hard not to exclusively HODL in cold storage while walking away from the industry entirely. Thankfully, the cavalry has arrived. Enter Discreet Log Contracts, a self-wrapped, self-bridged, self-custodied solution to put BTC to productive use.
+
+  \section{Solution: Bitcoin smart contracts via Discreet Log Contracts. A self-wrapped, self-bridged, \& self-custodied Bitcoin solution}
+
+  Tadge Dryja, the Bitcoin Lightning Network co-inventor and renowned research scientist at the MIT Digital Currency Initiative, published a seminal whitepaper titled “Discreet Log Contracts.” Dryja states,
+  \begin{quote}
+    Smart contracts are an often touted feature of cryptographic currency
+    systems such as Bitcoin, but they have yet to see widespread financial use.
+    [One] of the biggest hurdles to their implementation and adoption have been
+    scalability of the smart contracts, and the difficulty in getting data external
+    to the currency system into the smart contract. Privacy of the contract has
+    been another issue to date. Discreet Log Contracts are a system which
+    addresses the scalability and privacy concerns and seeks to minimize the
+    trust required in the oracle which provides external data. The contracts are
+    discreet in that external observers cannot detect the presence of the contract
+    in the transaction log. They also hinge on knowledge of a discrete logarithm,
+    which is a plus.\footnote{\url{https://adiabat.github.io/dlc.pdf}}
+  \end{quote}
+
+  In short, discreet log contracts (“DLCs”) acting as escrow contracts enable conditional payments between two or more parties. The parties can be users, institutions, even smart contracts – any entity with a Bitcoin address. The DLC uses discrete log contracts and the parties’ information is kept private, so it is a pun in that it's both "discrete" and "discreet."
+
+  How does a DLC work? An “event” (i.e., wager) dictates the DLC’s outcome. That event consists of an announcement which sets up the details for a set of predetermined potential outcomes (i.e., win/lose/other) and an attestation which identifies one of the outcomes as the official one. An oracle builds and signs the event announcement and attestation. Technically, DLCs function similar to a 2-of-3 multisig wallet in that two signatures are required to execute a transaction.\footnote{\url{https://support.bitpay.com/hc/en-us/articles/360032618692-What-is-a-Multisignature-Multisig-or-Shared-Wallet-}} The DLC is created with two parties and a third-party oracle. The oracle participant (i.e., single oracle or multi-oracle setup) attests to the observed reality and referees the transaction.
+
+  The key to a DLC is the oracle itself. Unlike a data feed oracle such as Chainlink’s that serves prices or other external data, the DLC oracle only has two functions:
+
+  \begin{enumerate}
+    \item At contract creation, the DLC oracle generates pre-signatures using the users’ keys, its own private key and its nonce. A pre-signature is built for each potential contract outcome. For example, a binary outcome (win/lose) will generate two pre-signatures, whereas a more complex outcome will generate n pre-signatures or may even generate a formula for computing pre-signatures (i.e., following a continuous distribution).
+    \item At contract close, the DLC oracle views the observed outcome and attests to the signature corresponding with that result. This completed signature lets the winning party execute the contract.
+  \end{enumerate}
+
+  DLCs have been in use for years so why do we care about them now? In fall 2021, Bitcoin received a major update, Taproot, which added support for Point Time Locked Contracts (PTLCs) and Schnorr Signatures. Both of these enable more powerful and streamlined DLCs.\footnote{\url{https://cointelegraph.com/bitcoin-for-beginners/a-beginners-guide-to-the-bitcoin-taproot-upgrade}}\footnote{\url{https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki}}\footnote{\url{https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki}}\footnote{\url{https://river.com/learn/terms/p/point-timelocked-contract-ptlc/}} An improvement from their predecessor Hash Time Locked Contracts (HTLCs), PTLCs lock Bitcoin to a public key (a point on its elliptical curve) and are unlocked by providing a signature from a satisfied signature adaptor. HTLCs can unwittingly create a link between multiple payments whereas PTLCs can use different keys and signatures, which improves safety while eliminating the risk of correlation. The addition of Schnorr signatures also allows PTLCs to take zero bytes of block space, which significantly reduces its footprint and improves real-world applicability.
+
+  In addition to DLC data scalability improvements, DLC.Link possesses numerous security improvements, providing highly desirable alternatives to the existing solutions. These include:
+
+  \emph{Facilitates non-custodial escrow functionality.} The parties involved in a contract, including any third party, cannot steal nor compromise the contract since the funds are held in decentralized vaults. This restriction prevents the mismanagement of the underlying BTC collateral. Practically speaking the BTC collateral is held in an escrow wallet.
+
+  \emph{Minimizes online attacks.} DLCs act as multisig wallets where finality is achieved through an unbiased decentralized oracle network. DLC.Link leverages oracle signatures of transactions as private keys to achieve finality and, by default, only permits the assets in the contracts to be spent.
+
+  \emph{Eliminates central points of failure.} DLCs hold the BTC collateral across multiple escrow accounts, preventing the creation of central points of failure. This removes the single point of failure or vulnerability hackers so routinely exploit with bridges – even when one account is compromised, however, the other accounts can still achieve consensus.
+
+  \emph{Provides Bitcoin Base-Level Security.} Since DLC.Link is built on Bitcoin, all applications, assets, and transactions inherit Bitcoin’s base-level security.
+
+  The result is a self-wrapped, self-bridged, self-custodied solution for Bitcoin smart contract transactions.
+
+
+  \section{Components of DLC.Link}
+
+  The DLC.Link platform consists of a combination of five component technologies:
+
+  \subsection{The Bitcoin DLC Oracle\textsuperscript{TM}}
+
+  The Bitcoin DLC Oracle™ plays the role of mediator by confirming the outcome for DLC participants. This is the primary engine powering DLC.Link’s infrastructure. The Bitcoin DLC Oracle™ cryptographically attests to the outcome of events happening in the real world or on other blockchains. Every DLC needs an oracle. The success of DLC.Link’s DLC infrastructure will be determined by a vibrant ecosystem of high-quality oracles attesting to outcomes of events outside the Bitcoin blockchain.
+
+  \subsection{Smart Contracts}
+
+  Smart contracts communicate between various on-chain sources, including data oracle systems, DeFi contracts, and the DLC.Link Management Contract. DLC.Link makes smart contracts scalable and private while allowing users to determine a contract’s outcome without involving a trusted third party.
+
+  On-chain contracts bloat the size of the blockchain, complicate the requirements for operating a node, and lead to higher fees and slow processing speeds. Further, they are public, meaning all network users can see the interactions between parties. With DLC.Link, however, blockchain explorers and non-intended parties are kept in the dark as to the contract terms and transaction amounts. As a result, DLC.Link successfully brings private and scriptless smart contracts to the Bitcoin network.
+
+  \subsection{Wallet integration library}
+
+
+  \subsection{Deposit Token}
+
+
+  \subsection{Developer tooling}
+
+  \section{What are oracles? What is the difference between a Chinlink and a DLC.Link enabled Bitcoin oracle? What is the role of a Bitcoin oracle?}
+
+  The word “oracle” comes from the Latin verb ōrāre, "to speak" and is usually in reference to a priest or priestess through whom a god is believed to speak. Most notably, oracles have had their place in Greek mythology and been predictors of the future. In the crypto space, Blockchain oracles are entities that connect blockchains to external systems, thereby enabling smart contracts to execute based upon inputs and outputs from the real world.
+
+  At the most fundamental level, oracles allow parties to open and execute transactions that settle on a blockchain network. The most well-known oracle provider, Chainlink, offers a decentralized network of nodes that provide data and information to the blockchain. Data feeds can be in the form of any data that isn’t natively found on the blockchain, such as the outcome of a sports match, asset price feeds, or historical weather data. DLC.Link offers its own unique decentralized Bitcoin Oracle Network (“BON”)™ focused exclusively on Bitcoin. DLC.Link is to Bitcoin what Chainlink is to all smart contracts.
+
+  What is a Bitcoin oracle? Bitcoin oracles solve a fundamental constraint of the Bitcoin network - interoperability. The safety and resiliency of the Bitcoin network exists today, partially because it is closed and contained from non-Bitcoin data and components. A Bitcoin oracle communicates with off-chain systems, but still allows for the movement of Bitcoin natively on-chain. In this way, logic that sits either on a decentralized network such as Ethereum or a centralized server is now able to escrow and settle Bitcoin. The practical reality is a decentralized Bitcoin Oracle Network ™ bringing smart contract functionality to Bitcoin.
+
+  As we have shown, oracles are an integral element to most applications built on blockchains. They act as bridges passing data back and forth between a blockchain and off-chain real-world systems. Without them, blockchains become siloed systems incapable of change and unable to respond to external events. In addition to simple integrations of public data sources, more interesting use cases emerge when Bitcoin oracles relay information from complex smart-contract systems on other blockchains.
+
+  Bitcoin oracles enable countless use cases for transactions requiring non-custodial escrow (trustless 3rd party middleman) and the movement of Bitcoin (capital). Their capacity to allow trustless deposits as well as to integrate with any outside data feed brings an entire new world to Bitcoin’s functionality. While oracles enable blockchains to interact with off-chain data sources, they do not, however, come without risks. One well-known risk is the oracle problem.
+
+  \section{What is the Oracle problem?}
+
+  The oracle problem refers to the issue of integrating off-chain data into on-chain smart contracts. Bitcoin transactions, one of the simplest forms of smart contract, typically leverage limited data, including public keys, signatures, timestamps and block sizes. This is reliable as its validity is objective and trustlessly verifiable through the blockchain. Integrating data, for example, like the score of a football match, into a smart contract in a trustless way has proven challenging. Currently, there are no established methods for ensuring the data provided by either the counterparty or the intermediary is authentic.
+
+  The core question remains how can off-chain data be trusted? As oracle attestations often come from off-chain sources this is a major concern. If there is only one oracle for a network, this presents a single point of failure. This undermines the true purpose of decentralized applications. This is the crux of the oracle problem. If the Bitcoin oracle goes offline, then data stops flowing on-chain which prevents final settlement on Bitcoin. Worse yet, if the Bitcoin oracle is manipulated, the data sourced from off-chain systems may be compromised. An oracle that publishes incorrect outcomes allows for fraudulent Bitcoin payments to occur defeating the entire purpose of a trustless system.
+
+  DLC.Link has developed a solution to this problem. DLC.Link designed a decentralized network of oracles that listen to events from numerous other blockchains which leverages the trustless and decentralized nature of the greater blockchain ecosystem. DLC.Link combines DLCs with proven oracle solutions like Chainlink in order to unlock Bitcoin liquidity without the need for a trusted third party. To successfully bridge the gap between the strongest, decentralized asset, Bitcoin, and other smart contract blockchains, requires numerous Bitcoin oracles to mitigate data inaccuracy, collusion, and downtime. DLC.Link is building the infrastructure for anyone to set-up and run a Bitcoin oracle. As the Bitcoin Oracle Network ™ matures, this will further empower developers and applications on any blockchain or system to accept Bitcoin collateral without any of the implications, restrictions, or risk of using a third-party. Said another way, the combination of DLCs and a Bitcoin Oracle Network ™ remove the need to wrap, bridge, or use CeFi for any BTC related transactions. The DLC.Link infrastructure will serve anyone willing to use BTC as capital for any smart contract conforming to the Bitcoin principle of a trustless monetary system.
+
+  \section{Who are the parties involved in a DLC transaction? What are some use cases?}
+
+  [Betting] A simple example of a DLC-enabled escrow contract. Bitcoiners Alicia \& Frank want to wager on the outcome the World Cup final. Alicia, an Argentinian, and Frank, a Frenchman, each bet 1 BTC their team wins the World Cup. Alicia \& Frank each send one BTC to a DLC-enabled escrow wallet. The escrow wallet securely holds the BTC sent by Alicia \& Frank. Additionally, the escrow wallet interacts with a DLC Bitcoin Oracle network to sign the wager transaction. At the end of the game, the DLC Bitcoin Oracle network confirms the final score through an attestation through off-chain data sources (i.e., ESPN, Yahoo Sports, and CNN Sports). After 2 of the 3 “official” news sources confirm the World Cup winner, the Oracle communicates with the escrow contract, triggering a release of 2 BTC to the winner of the wager.
+
+  \section{Conclusion}
+
+  The DLC.Link platform provides essential infrastructure for scalable Bitcoin smart contracts. Discreet log contracts solve each of the problems plaguing today’s custody, bridging, and CeFi solutions. DLCs self-wrap, self-bridge, and self-custody native Bitcoin in trust minimized ways that bolster decentralization and allow for greater self-sovereignty. As a result, DLC.Link expects to usher in a Bitcoin renaissance.
+
+\end{document}
