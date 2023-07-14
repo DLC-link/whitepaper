@@ -95,7 +95,7 @@
 
   \subsection{How does a DLC work?}
 
-  An “event” (i.e. wager) dictates the DLC’s outcome. That event consists of an announcement which sets up the details for a set of predetermined potential outcomes (i.e., win/lose/other) and an attestation which identifies one of the outcomes as the official one. An attestor builds and signs the event announcement and attestation. Technically, DLCs function similar to a 2-of-3 multisig wallet in that two signatures are required to execute a transaction.\footnote{\url{https://support.bitpay.com/hc/en-us/articles/360032618692-What-is-a-Multisignature-Multisig-or-Shared-Wallet-}} The DLC is created with two parties and a third-party oracle. The oracle participant (either a single oracle or a multi-oracle setup) attests to the observed reality and referees the transaction.
+  An “event” (i.e. wager) dictates the DLC’s outcome. That event consists of an announcement which sets up the details for a set of predetermined potential outcomes (i.e., win/lose/other) and an attestation which identifies one of the outcomes as the official one. An attestor builds and signs the event announcement and attestation. Technically, DLCs function as a 2-of-2 multisig wallet\footnote{\url{https://support.bitpay.com/hc/en-us/articles/360032618692-What-is-a-Multisignature-Multisig-or-Shared-Wallet-}}  in that two signatures are required to execute a transaction. The DLC is created between two parties who choose one or more attestors. The attestor takes on-chain or off-chain input from a third-party oracle, and translates it into settlement instructions into the DLC.
 
   This oracle is often referred to as a DLC Attestor, but we prefer to use the term Bitcoin Attestor for wider communities not familiar with the details of the technology. Unlike a data feed oracle such as Chainlink’s that serves prices or other external data, the Bitcoin Attestor only has two functions:
 
@@ -121,7 +121,7 @@
 
   The DLC.Link platform consists of a combination of four main component technologies: the Bitcoin Attestor\textsuperscript{TM}, libraries that enable wallets to sign DLC transactions, a smart contract layer for DLC management and optionally a cloud storage layer for metadata.
   \begin{center}
-    \includegraphics[width=\textwidth]{components}
+    \includegraphics[width=\textwidth]{simple_dlc_flow}
   \end{center}
 
   \subsection{The Bitcoin Attestor\textsuperscript{TM}}
